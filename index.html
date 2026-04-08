@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Unlock</title>
+    <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --box-size: 60px;
+            --primary-color: #4a90e2;
+            --success-color: #27ae60;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            transition: background 0.5s ease;
+        }
+
+        /* Container for the game */
+        #game-container {
+            text-align: center;
+        }
+
+        .instruction {
+            margin-bottom: 20px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        /* The 5-letter block layout */
+        .input-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .letter-box {
+            width: var(--box-size);
+            height: var(--box-size);
+            border: 3px solid #ccc;
+            border-radius: 8px;
+            font-size: 2rem;
+            text-align: center;
+            text-transform: uppercase;
+            font-weight: bold;
+            background: white;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .letter-box:focus {
+            border-color: var(--primary-color);
+        }
+
+        /* Success Screen Styling */
+        .hidden {
+            display: none;
+        }
+
+        #congrats-screen {
+            font-size: 3rem;
+            color: var(--success-color);
+            animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <div class="instruction">TYPE THE SECRET WORD</div>
+        <div class="input-group">
+            <input type="text" class="letter-box" maxlength="1" autofocus>
+            <input type="text" class="letter-box" maxlength="1">
+            <input type="text" class="letter-box" maxlength="1">
+            <input type="text" class="letter-box" maxlength="1">
+            <input type="text" class="letter-box" maxlength="1">
+        </div>
+    </div>
+
+    <div id="congrats-screen" class="hidden">
+        CONGRATULATIONS!
+    </div>
+
+    <script>
+        const inputs = document.querySelectorAll('.letter-box');
+        const gameContainer = document.getElementById('game-container');
+        const congratsScreen = document.getElementById('congrats-screen');
+        const targetWord = "TRUST";
+
+        inputs.forEach((input, index) => {
+            // Handle typing
+            input.addEventListener('input', (e) => {
+                const value = e.target.value.toUpperCase();
+                input.value = value;
+
+                // Move to next box if filled
+                if (value && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+
+                checkWord();
+            });
+
+            // Handle backspace
+            input.addEventListener('keydown', (e) => {
+                if (e.key === "Backspace" && !input.value && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+        });
+
+        function checkWord() {
+            const currentWord = Array.from(inputs).map(i => i.value).join('');
+            
+            if (currentWord === targetWord) {
+                // Switch screens
+                gameContainer.classList.add('hidden');
+                congratsScreen.classList.remove('hidden');
+                document.body.style.backgroundColor = "#e8f5e9";
+            }
+        }
+    </script>
+</body>
+</html>
